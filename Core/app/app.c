@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "main.h"
+#include "tim.h"
 
 #include "app.h"
 #include "adc_dac.h"
@@ -86,21 +87,13 @@ void app_init1(void)
 void app_init2(void)
 {
    // There needs to be a delay for USB to enumerated and connect before the first printf.
-   // I have not found a robust way to check of if the connection is up yet, so this is a bit of a hack
+   // I have not found a robust way to check of the connection is up yet, so this is a bit of a hack
    HAL_Delay(2000);
-   
-   
-#if 0   
-   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_4);   //Start PWM sqaure wave generation on PA3 (CN9, p1)
-   
-
-   // Using TIM2 running at ~48Khz to trigger ADC1 and DAC1 conversions
-   // ADC1 is set for 8x oversampling 
-   HAL_TIM_Base_Start(&htim2);  // Turn on TIM2. It will instantly start emitting 48,012Hz update pulses
-
-#endif
-
    dbm_init();                  // Start the serial debug monitor
+
+   // Using TIM2 running at ~48Khz to trigger DAC conversions
+   dac_init();
+   HAL_TIM_Base_Start(&htim2);  // Turn on TIM2. It will instantly start emitting 48,012Hz update pulses
 }
 
 
@@ -108,28 +101,5 @@ void app_init2(void)
 void app_loop_bottom(void)
 {
    dbm_processChar();           // Debug monitor process
-
-//    HAL_GPIO_WritePin(LD6_GPIO_Port, LD6_Pin, GPIO_PIN_SET);
-//    HAL_Delay(100);
-//    HAL_GPIO_WritePin(LD6_GPIO_Port, LD6_Pin, GPIO_PIN_RESET);
-//    HAL_Delay(1000);
 }
 
-
-
-
-
-
-
-
-/////////////////////////////////////////////////////////////////
-// Old code, from main loop
-/////////////////////////////////////////////////////////////////
-
-
-#if 0   //Not longer would work with DMA setup, this is for polling
-    {
-       // Write a value to the DAC (Example for 12-bit resolution: 0 to 4095)
-       HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_L, sample);
-    }
-#endif

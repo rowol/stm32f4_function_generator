@@ -4,4 +4,4 @@
 
 #pragma once
 
-void adc_dac_init(void);
+void dac_init(void);

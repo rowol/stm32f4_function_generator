@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <stdint.h>
 #include <stdbool.h>
 
 
@@ -22,6 +23,15 @@
 #define DAC_MAX       ((1<<12)-1)
 #define DAC_MID       (DAC_MAX/2)
 
+
+
+//Debug/timing pins for use with scope.  On STM32F4 DISCO:
+//PD15 is blue LED
+//PD14 is red LED 
+#define SET_BLUE()    HAL_GPIO_WritePin(LD6_GPIO_Port, LD6_Pin, GPIO_PIN_SET)
+#define RESET_BLUE()  HAL_GPIO_WritePin(LD6_GPIO_Port, LD6_Pin, GPIO_PIN_RESET)
+#define SET_RED()     HAL_GPIO_WritePin(LD5_GPIO_Port, LD5_Pin, GPIO_PIN_SET)
+#define RESET_RED()   HAL_GPIO_WritePin(LD5_GPIO_Port, LD5_Pin, GPIO_PIN_RESET)
 
 
 
