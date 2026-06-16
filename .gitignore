@@ -5,6 +5,7 @@ build/
 .mxproject
 
 # GTAG files
+tag_app.sh
 GPATH
 GRTAGS
 GTAGS
