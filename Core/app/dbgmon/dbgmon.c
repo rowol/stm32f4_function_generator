@@ -39,8 +39,8 @@ static char g_szResult[CMD_LEN_MAX];
 
 //RSW NOTE: In the C++ version on FM theremin I used the variadic function
 //This is illegal in C, can't define a variadic function like this until C23, 
-//must have at least one parameter before ... Using the variadic at C compiled,
-//but the parameters passed the the dispatch function pointers were wrong
+//must have at least one parameter before ... Using the variadic in C compiled,
+//but the parameters passed into the dispatch function pointers were wrong
 #ifndef __cplusplus
 typedef int (*FunctionPointer)();
 #else

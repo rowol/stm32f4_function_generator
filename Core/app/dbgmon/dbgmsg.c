@@ -3,7 +3,7 @@
 // Debug output and input for STM32F4 Disco
 //
 // Uses the virtual com port on USB device connector (the micro usb connector, not the STLink connector)
-// (Most of the STDOUT remapping is done in app.c)
+// (Most of the STDOUT/STDIN remapping is done in app.c)
 //
 
 #include <stdio.h>

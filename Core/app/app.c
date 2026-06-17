@@ -11,7 +11,7 @@
 #include "tim.h"
 
 #include "app.h"
-#include "adc_dac.h"
+#include "dac_dma.h"
 #include "ring_buffer.h"
 #include "dbgmon.h"
 

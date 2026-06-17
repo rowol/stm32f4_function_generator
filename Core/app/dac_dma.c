@@ -9,8 +9,10 @@
 #include <string.h>
 
 #include "main.h"
-#include "app.h"
 #include "dac.h"
+
+#include "app.h"
+#include "dac_dma.h"
 #include "sig_gen.h"
 
 
