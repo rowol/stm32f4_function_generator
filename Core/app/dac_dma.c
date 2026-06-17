@@ -29,14 +29,13 @@
 
 
 
+// DAC DMA ping-pong buffer.  The 32 byte alignment is a carry over from when this was in
+// H7 code. The H7's D-cache line size is 32 bytes.  It is not necessary on the F4, the
+// alignment just needs to be 2 or 4, since the DAC transfer size is 16 bits.   Leaving it
+// at 32 just means if I reuse the code in an H7 project later, stuff won't break.
+// This was also good practice for H7 AXI bus burst transfers
 
-
-// DAC DMA ping-pong buffer should be in D2, which the standard DMA controllers can handle
-// (By default they will wind up in DTCM, which DMA1 cannot access)
-// Also explicitly align to 32 bytes (good practice for AXI bus burst transfers)
-
-// DAC Input Buffer
-uint16_t dac_buffer[BLK_SAMPLE_COUNT*2] __attribute__((section(".d2_dma_buffers"), aligned(32)));
+uint16_t dac_buffer[BLK_SAMPLE_COUNT*2] __attribute__((aligned(32)));
 
 
 //Combination ADC and DAC init

@@ -37,12 +37,15 @@ static FG_SHAPE g_shape = FG_SINE;   //Startup shape
 
 bool fg_set_freq(int freq_new)
 {
-   if (1.0f > freq_new || freq_new > 10000.0f) {
-      printf("ERR: Illegal frequency try 1hz - 10Khz\r\n");
+   // The upper frequency limit is somewhat arbitrary, that's about where "audio" ends.
+   // The sampling rate is high enough that you could probably run higher frequencies
+   // if desired.
+   if (1 > freq_new || freq_new > 22000) {
+      printf("ERR: Illegal frequency, try 1 - 22000 hz\r\n");
       return false;
    }
 
-   //HACK, should should maybe reset the phase, etc...
+   //HACK, should maybe reset the phase, etc...  not sure we care
    g_freq = freq_new;
    return true;
 }
@@ -51,12 +54,12 @@ bool fg_set_freq(int freq_new)
 
 bool fg_set_shape(FG_SHAPE shape_new)
 {
-   if (!(0 <= shape_new && shape_new <= FG_SHAPE_MAX)) {
-      printf("ERR: Illegal shape, try 0-%d\r\n", FG_SHAPE_MAX);
+   if (0 > shape_new || shape_new > FG_SHAPE_MAX) {
+      printf("ERR: Illegal shape, try 0 - %d\r\n", FG_SHAPE_MAX);
       return false;
    }
 
-   //HACK, should should maybe reset the phase, etc...
+   //HACK, should maybe reset the phase, etc...  not sure we care
    g_shape = shape_new;
    return true;
 }

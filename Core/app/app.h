@@ -10,13 +10,19 @@
 
 
 //Useful constants
-#define SAMPLING_RATE_HZ   48000
+
+// Use a sampling rate that divides nicely into the 84Mhz timer 2 clock
+// The higher the sampling rate, the nicer the higher frequency waveforms
+// will look (before filtering)   The max effective DAC conversion rate
+// is something like 1M
+// (Does not need to be a "standard sampling rate")
+#define SAMPLING_RATE_HZ   400000
 
 // Number of samples in each DAC DMA ping-pong buffer block
-// If this number is increased, also be sure to update the MPU region 0
-// size setting in CubeMX and regenerate code (for MPU_Config.)  Currently
-// set to 1K, so count could grow to 128 before there are any problems
-#define BLK_SAMPLE_COUNT      64
+// At 400Khz samping rate, a 512 sample block gives a 1.28ms ISR window
+// At 48Khz sampling rate, a  64 sample block gives a 1.33ms ISR window
+// (The sine wave generation is currently using about 50% of the ISR window)
+#define BLK_SAMPLE_COUNT     512
 
 
 //For 12 bit internal DAC 
