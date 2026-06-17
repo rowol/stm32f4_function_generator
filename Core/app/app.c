@@ -19,7 +19,7 @@
 
 
 
-// printf rediect to CDC stuff
+// printf redirect to CDC stuff
 #include "usbd_cdc_if.h"
 
 int _write(int file, char *ptr, int len)
@@ -36,10 +36,11 @@ int _write(int file, char *ptr, int len)
 }
 
 
-// scanf rediect to CDC stuff
+// scanf redirect to CDC stuff
 volatile char usb_rx_char = 0;
 volatile uint8_t usb_rx_ready = 0;
 
+//Hook the USB receive ISR so we know when a character comes in
 void CDC_Receive_FS_hook(uint8_t* Buf, uint32_t Len)
 {
   if (Len > 0) {
@@ -49,11 +50,13 @@ void CDC_Receive_FS_hook(uint8_t* Buf, uint32_t Len)
 }
 
 
+//Check if there is a character available
 bool is_usb_read_ready(void)
 {
    return usb_rx_ready != 0;
 }
 
+// Blocking read function
 int _read(int file, char *ptr, int len)
 {
     int index = 0;
