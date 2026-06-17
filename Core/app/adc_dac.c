@@ -57,10 +57,11 @@ void dac_init(void)
 void HAL_DACEx_ConvHalfCpltCallbackCh2(DAC_HandleTypeDef *hdac)
 {
    SET_BLUE();
-// generate_sine(&dac_buffer[0], BLK_SAMPLE_COUNT);                 // Fill 1st half
-// generate_sawtooth(&dac_buffer[0], BLK_SAMPLE_COUNT);             // Fill 1st half
-// generate_square(&dac_buffer[0], BLK_SAMPLE_COUNT);               // Fill 1st half
-   generate_triangle(&dac_buffer[0], BLK_SAMPLE_COUNT);             // Fill 1st half
+   generate_sine(&dac_buffer[0], BLK_SAMPLE_COUNT);                     // Fill 1st half
+// generate_sawtooth(&dac_buffer[0], BLK_SAMPLE_COUNT);                 // Fill 1st half
+// generate_square(&dac_buffer[0], BLK_SAMPLE_COUNT);                   // Fill 1st half
+// generate_triangle(&dac_buffer[0], BLK_SAMPLE_COUNT);                 // Fill 1st half
+   RESET_BLUE();
 }
 
 
@@ -68,11 +69,12 @@ void HAL_DACEx_ConvHalfCpltCallbackCh2(DAC_HandleTypeDef *hdac)
 // DAC buffer empty interrupt
 void HAL_DACEx_ConvCpltCallbackCh2(DAC_HandleTypeDef *hdac)
 {
-   RESET_BLUE();
-// generate_sine(&dac_buffer[BLK_SAMPLE_COUNT], BLK_SAMPLE_COUNT);      // Fill 2nd half
+   SET_BLUE();
+   generate_sine(&dac_buffer[BLK_SAMPLE_COUNT], BLK_SAMPLE_COUNT);      // Fill 2nd half
 // generate_sawtooth(&dac_buffer[BLK_SAMPLE_COUNT], BLK_SAMPLE_COUNT);  // Fill 2nd half
 // generate_square(&dac_buffer[BLK_SAMPLE_COUNT], BLK_SAMPLE_COUNT);    // Fill 2nd half
-   generate_triangle(&dac_buffer[BLK_SAMPLE_COUNT], BLK_SAMPLE_COUNT);  // Fill 2nd half
+// generate_triangle(&dac_buffer[BLK_SAMPLE_COUNT], BLK_SAMPLE_COUNT);  // Fill 2nd half
+   RESET_BLUE();
 }
 
 

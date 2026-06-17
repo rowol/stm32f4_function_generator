@@ -5,6 +5,7 @@
 //
 
 
+#include <stdio.h>
 #include <math.h>
 
 #include "app.h"
@@ -14,14 +15,29 @@
 
 static const float F_DAC_MAX = (1<<12) - 1;
 static const float F_DAC_MID = F_DAC_MAX/2.0f;
-static const float F_SCALE   = 0.92f;               // To prevent clipping (was seeing some due to loading from
-                                                    // my 1M scope probe?) slightly scale the output
 
+// To prevent clipping (was seeing some due to loading from my 1M scope probe?)
+// slightly scale the output.   The signal generation functions generate as
+// an offset from F_DAC_MID, so the peak and the base are scaled by this factor.
+// In addition to the output peak limit, I also noticed with scope probe attached,
+// signal doesn't go down much below 63mV... setting the scale also prevents having
+// flat spots on the bottom of the triangle, sine, etc..
+static const float F_SCALE   = 0.92f;
+
+
+// Module parameters
 static float freq = 440.0f;
 
 
 
-//Generates 440Hz sine wave, for testing
+
+
+
+
+
+
+
+//Phase ranges from 0 - 2Pi
 void generate_sine(uint16_t *target_sub_buffer, uint16_t count)
 {
    static float phase = 0.0f;
@@ -42,41 +58,39 @@ void generate_sine(uint16_t *target_sub_buffer, uint16_t count)
 }
 
 
-
-//Generates 440Hz sine wave, for testing
+// "Phase" ranges from -0.5 - 0.5
 void generate_sawtooth(uint16_t *target_sub_buffer, uint16_t count)
 {
-   static float phase = 0.0f;
+   static float phase = -0.5f;
 
-   // Calculate increment: 440Hz wave assuming a standard 48kHz trigger clock
    float phase_increment = freq / (float)SAMPLING_RATE_HZ;
 
    for (int i=0; i < count; i++) {
-      float sample = F_DAC_MAX * phase * F_SCALE;
+      float sample = F_DAC_MID + F_DAC_MAX * phase * F_SCALE;
 
       target_sub_buffer[i] = (uint16_t)sample;
 
       phase += phase_increment;
-      if (phase >= 1.0f)
+      if (phase >= 0.5f)
          phase -= 1.0f;
    }
 }
 
 
 
+// "Phase" ranges from 0 - 1
 void generate_triangle(uint16_t *target_sub_buffer, uint16_t count)
 {
    static float phase = 0.0f;
 
-   // Calculate increment: 440Hz wave assuming a standard 48kHz trigger clock
    float phase_increment = freq / (float)SAMPLING_RATE_HZ;
 
    for (int i=0; i < count; i++) {
       float sample;
       if (phase < 0.5f)
-         sample = F_DAC_MAX * phase*2 * F_SCALE;
+         sample = F_DAC_MID - F_DAC_MID * phase*2 * F_SCALE;
       else 
-         sample = F_DAC_MAX * (1.0f - (phase-0.5f)*2) * F_SCALE;
+         sample = F_DAC_MID - F_DAC_MID * (2.0f - phase*2) * F_SCALE;
 
       target_sub_buffer[i] = (uint16_t)sample;
 
@@ -88,19 +102,19 @@ void generate_triangle(uint16_t *target_sub_buffer, uint16_t count)
 
 
 
+// "Phase" ranges from 0 - 1
 void generate_square(uint16_t *target_sub_buffer, uint16_t count)
 {
    static float phase = 0.0f;
 
-   // Calculate increment: 440Hz wave assuming a standard 48kHz trigger clock
    float phase_increment = freq / (float)SAMPLING_RATE_HZ;
 
    for (int i=0; i < count; i++) {
       float sample;
       if (phase < 0.5f)
-         sample = F_DAC_MAX *F_SCALE;
+         sample = F_DAC_MID + F_DAC_MID*F_SCALE;
       else
-         sample = 0;
+         sample = F_DAC_MID - F_DAC_MID*F_SCALE;
 
       target_sub_buffer[i] = (uint16_t)sample;
 

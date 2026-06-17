@@ -12,7 +12,7 @@
 //Useful constants
 #define SAMPLING_RATE_HZ   48000
 
-// Number of samples in each ADC/DAC DMA and ring buffer block
+// Number of samples in each DAC DMA ping-pong buffer block
 // If this number is increased, also be sure to update the MPU region 0
 // size setting in CubeMX and regenerate code (for MPU_Config.)  Currently
 // set to 1K, so count could grow to 128 before there are any problems
