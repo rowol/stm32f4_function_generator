@@ -13,6 +13,7 @@
 #include "dbgmon.h"
 #include "dbgmsg.h"
 
+#include "sig_gen.h"
 
 
 #define CMD_LEN_MAX  256     //Includes trailing NULL
@@ -72,7 +73,8 @@ static inline void outPrompt(void) {db_outStr("$ ");}
 
 
 //Debugging functions
-static int cmd_set_freq(int* pFreq);
+static int cmd_set_freq(int *pFreq);
+static int cmd_set_shape(char *pShape);
 
 
 ////////////////////////////////////////////////////////////
@@ -82,7 +84,7 @@ static int cmd_set_freq(int* pFreq);
 static const DISPATCH dispatch_table[] =
 {
    {" f %d", (FunctionPointer)cmd_set_freq, NULL, "Set waveform frequency (sample)"},
-// {" s %c", (FunctionPointer)cmd_set_shape, NULL, "Set waveform shape (s=sine, w=sawtooth, t=triangle, q=square)"},
+   {" s %c", (FunctionPointer)cmd_set_shape, NULL, "Set waveform shape (s=sine, w=sawtooth, t=triangle, q=square)"},
 
    {" ", (FunctionPointer)NULL, NULL, ""},         //RSW - blank line? (for formatting only)
 
@@ -358,17 +360,38 @@ static int getTokenCount(const char* p)
 
 static int cmd_set_freq(int* pFreq)
 {
-#if 1
-   db_printf("Setting freq to %d\r\n", *pFreq);
-#else
    if (fg_set_freq(*pFreq))
       db_printf("Set function generator freq to %d\r\n", *pFreq);
    else
       db_printf("ERR: Setting function generator freq to %d failed\r\n", *pFreq);
-#endif
 
    return 0;
 }
-      
+
+
+
+static int cmd_set_shape(char* pShape)
+{
+   FG_SHAPE shape;
+
+   switch (*pShape) {
+      case 's': shape = FG_SINE; break;
+      case 'w': shape = FG_SAWTOOTH; break;
+      case 't': shape = FG_TRIANGLE; break;
+      case 'q': shape = FG_SQUARE; break;
+
+      default:
+         db_printf("ERR: Illegal shape %c\r\n", *pShape);
+         return false;
+   }
+
+   if (fg_set_shape(shape))
+      db_printf("Set function generator shape to %c\r\n", *pShape);
+   else
+      db_printf("ERR: Setting function generator shape to %c failed\r\n", *pShape);
+
+   return 0;
+}
+
    
 

@@ -19,7 +19,7 @@
 #define BLK_SAMPLE_COUNT      64
 
 
-
+//For 12 bit internal DAC 
 #define DAC_MAX       ((1<<12)-1)
 #define DAC_MID       (DAC_MAX/2)
 

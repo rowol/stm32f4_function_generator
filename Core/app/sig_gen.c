@@ -13,8 +13,9 @@
 
 
 
-static const float F_DAC_MAX = (1<<12) - 1;
-static const float F_DAC_MID = F_DAC_MAX/2.0f;
+//For 12 bit internal DAC
+static const float F_DAC_MAX = (float)DAC_MAX;
+static const float F_DAC_MID = (float)DAC_MID;
 
 // To prevent clipping (was seeing some due to loading from my 1M scope probe?)
 // slightly scale the output.   The signal generation functions generate as
@@ -25,12 +26,40 @@ static const float F_DAC_MID = F_DAC_MAX/2.0f;
 static const float F_SCALE   = 0.92f;
 
 
+
+
+
 // Module parameters
-static float freq = 440.0f;
+static float    g_freq  = 440.0f;    //Startup frequency
+static FG_SHAPE g_shape = FG_SINE;   //Startup shape
 
 
 
+bool fg_set_freq(int freq_new)
+{
+   if (1.0f > freq_new || freq_new > 10000.0f) {
+      printf("ERR: Illegal frequency try 1hz - 10Khz\r\n");
+      return false;
+   }
 
+   //HACK, should should maybe reset the phase, etc...
+   g_freq = freq_new;
+   return true;
+}
+
+
+
+bool fg_set_shape(FG_SHAPE shape_new)
+{
+   if (!(0 <= shape_new && shape_new <= FG_SHAPE_MAX)) {
+      printf("ERR: Illegal shape, try 0-%d\r\n", FG_SHAPE_MAX);
+      return false;
+   }
+
+   //HACK, should should maybe reset the phase, etc...
+   g_shape = shape_new;
+   return true;
+}
 
 
 
@@ -38,12 +67,12 @@ static float freq = 440.0f;
 
 
 //Phase ranges from 0 - 2Pi
-void generate_sine(uint16_t *target_sub_buffer, uint16_t count)
+static void generate_sine(uint16_t *target_sub_buffer, uint16_t count)
 {
    static float phase = 0.0f;
 
    // Calculate increment: 440Hz wave assuming a standard 48kHz trigger clock
-   float phase_increment = 2.0f * 3.14159265f * freq / (float)SAMPLING_RATE_HZ;
+   float phase_increment = 2.0f * 3.14159265f * g_freq / (float)SAMPLING_RATE_HZ;
 
    for (int i=0; i < count; i++) {
       // 12-bit DAC mid-point is 2048. Amplitude of 1500 keeps it from clipping.
@@ -58,12 +87,13 @@ void generate_sine(uint16_t *target_sub_buffer, uint16_t count)
 }
 
 
+
 // "Phase" ranges from -0.5 - 0.5
-void generate_sawtooth(uint16_t *target_sub_buffer, uint16_t count)
+static void generate_sawtooth(uint16_t *target_sub_buffer, uint16_t count)
 {
    static float phase = -0.5f;
 
-   float phase_increment = freq / (float)SAMPLING_RATE_HZ;
+   float phase_increment = g_freq / (float)SAMPLING_RATE_HZ;
 
    for (int i=0; i < count; i++) {
       float sample = F_DAC_MID + F_DAC_MAX * phase * F_SCALE;
@@ -102,12 +132,12 @@ static void generate_triangle(uint16_t *target_sub_buffer, uint16_t count)
 
 
 
-// "Phase" ranges from 0 - 1
-void generate_square(uint16_t *target_sub_buffer, uint16_t count)
+// "Phase" ranges from 0 to 1
+static void generate_square(uint16_t *target_sub_buffer, uint16_t count)
 {
    static float phase = 0.0f;
 
-   float phase_increment = freq / (float)SAMPLING_RATE_HZ;
+   float phase_increment = g_freq / (float)SAMPLING_RATE_HZ;
 
    for (int i=0; i < count; i++) {
       float sample;
@@ -124,3 +154,19 @@ void generate_square(uint16_t *target_sub_buffer, uint16_t count)
    }
 }
 
+
+
+void fg_fill_dac_buffer(uint16_t *buf, uint16_t count)
+{
+   // Choose the correct fill routine based on the current shape setting
+   switch (g_shape) { 
+      case FG_SINE:      generate_sine(buf, count);      break;
+      case FG_SQUARE:    generate_square(buf, count);    break;
+      case FG_TRIANGLE:  generate_triangle(buf, count);  break;
+      case FG_SAWTOOTH:  generate_sawtooth(buf, count);  break;
+
+      default:
+         printf("ERR: illegal wave shape\r\n");
+         break;
+   }
+}

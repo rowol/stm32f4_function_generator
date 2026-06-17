@@ -9,13 +9,19 @@
 #include <stdbool.h>
 
 
+typedef enum {
+   FG_SINE=0,
+   FG_SQUARE=1,
+   FG_TRIANGLE=2,
+   FG_SAWTOOTH=3,
+} FG_SHAPE;
+
+#define FG_SHAPE_MAX FG_SAWTOOTH
+
+
+
 bool fg_set_freq(int freq_new);
-
-
-void generate_sine(uint16_t *target_sub_buffer, uint16_t count);
-void generate_sawtooth(uint16_t *target_sub_buffer, uint16_t count);
-void generate_triangle(uint16_t *target_sub_buffer, uint16_t count);
-void generate_square(uint16_t *target_sub_buffer, uint16_t count);
-
+bool fg_set_shape(FG_SHAPE shape_new);
+void fg_fill_dac_buffer(uint16_t *buf, uint16_t count);
 
 
