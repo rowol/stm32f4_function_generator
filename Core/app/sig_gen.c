@@ -78,25 +78,25 @@ void generate_sawtooth(uint16_t *target_sub_buffer, uint16_t count)
 
 
 
-// "Phase" ranges from 0 - 1
-void generate_triangle(uint16_t *target_sub_buffer, uint16_t count)
+// "Phase" ranges from -2 to 2
+static void generate_triangle(uint16_t *target_sub_buffer, uint16_t count)
 {
-   static float phase = 0.0f;
+   static float phase = -2.0f;
 
-   float phase_increment = freq / (float)SAMPLING_RATE_HZ;
+   float phase_increment = g_freq*4 / (float)SAMPLING_RATE_HZ;        // Because phase range is quadrupled
 
    for (int i=0; i < count; i++) {
       float sample;
-      if (phase < 0.5f)
-         sample = F_DAC_MID - F_DAC_MID * phase*2 * F_SCALE;
+      if (phase < 0.0f)
+         sample = F_DAC_MID + F_DAC_MID * (1.0f + phase) * F_SCALE;   // Upward half
       else 
-         sample = F_DAC_MID - F_DAC_MID * (2.0f - phase*2) * F_SCALE;
+         sample = F_DAC_MID + F_DAC_MID * (1.0f - phase) * F_SCALE;   // Downward half
 
       target_sub_buffer[i] = (uint16_t)sample;
 
       phase += phase_increment;
-      if (phase >= 1.0f)
-         phase -= 1.0f;
+      if (phase >= 2.0f)
+         phase -= 4.0f;
    }
 }
 
