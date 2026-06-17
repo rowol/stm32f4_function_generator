@@ -30,8 +30,12 @@ project(${CMAKE_PROJECT_NAME})
 # RSW: add warnings/errors when float gets promoted to double
 string(APPEND CMAKE_C_FLAGS " -Wdouble-promotion -Werror=double-promotion -Wfloat-conversion -Werror=float-conversion")
 
-# RSW: override debug flags so instead of -O0 we get -Og and no debug info (not using source debugging on this one yet)
-string(APPEND CMAKE_C_FLAGS_DEBUG " -Og -g0")
+# RSW: override debug flags so instead of -O0 we get -Og, i.e. debug safe optimizations
+string(APPEND CMAKE_C_FLAGS_DEBUG " -Og")
+
+# RSW: override release flags so we get -O2 rather than -Os, i.e. speed over size)
+string(APPEND CMAKE_C_FLAGS_RELEASE " -O2")
+
 
 
 
