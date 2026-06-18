@@ -84,7 +84,7 @@ static int cmd_set_shape(char *pShape);
 static const DISPATCH dispatch_table[] =
 {
    {" f %d", (FunctionPointer)cmd_set_freq, NULL, "Set waveform frequency (sample)"},
-   {" s %c", (FunctionPointer)cmd_set_shape, NULL, "Set waveform shape (s=sine, w=sawtooth, t=triangle, q=square)"},
+   {" s %c", (FunctionPointer)cmd_set_shape, NULL, "Set waveform shape (s=sine, w=sawtooth, t=triangle, q=square, l=silence, 1=sequence 1)"},
 
    {" ", (FunctionPointer)NULL, NULL, ""},         //RSW - blank line? (for formatting only)
 
@@ -375,10 +375,12 @@ static int cmd_set_shape(char* pShape)
    FG_SHAPE shape;
 
    switch (*pShape) {
-      case 's': shape = FG_SINE; break;
-      case 'w': shape = FG_SAWTOOTH; break;
-      case 't': shape = FG_TRIANGLE; break;
-      case 'q': shape = FG_SQUARE; break;
+      case 'l': shape = FG_SILENCE;   break;
+      case 's': shape = FG_SINE;      break;
+      case 'w': shape = FG_SAWTOOTH;  break;
+      case 't': shape = FG_TRIANGLE;  break;
+      case 'q': shape = FG_SQUARE;    break;
+      case '1': shape = FG_SEQUENCE1; break;
 
       default:
          db_printf("ERR: Illegal shape %c\r\n", *pShape);
