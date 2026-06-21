@@ -95,7 +95,7 @@ static const DISPATCH dispatch_table[] =
     */
    {" !", (FunctionPointer) NULL, "", "repeat the last command"},
    {" ?", (FunctionPointer) help, "", "help summary"},
-   {" help", (FunctionPointer) help, "", "help summary"},
+   {" h", (FunctionPointer) help, "", "help summary"},
 
    /*  zero-length szFormat string indicates end of table ... */
    {""},
