@@ -141,7 +141,7 @@ bool dbm_processChar(void)
       return false;
 
    //Handle backspaces
-   if (c==127) {
+   if (c==127 || c=='\b') {
       if (pszHead>szLine)
          pszHead--;
       return false;
