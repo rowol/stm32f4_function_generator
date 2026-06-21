@@ -74,6 +74,7 @@ static inline void outPrompt(void) {db_outStr("$ ");}
 
 //Debugging functions
 static int cmd_set_freq(int *pFreq);
+static int cmd_set_scale(float *pScale);
 static int cmd_set_shape(char *pShape);
 
 
@@ -85,6 +86,7 @@ static const DISPATCH dispatch_table[] =
 {
    {" f %d", (FunctionPointer)cmd_set_freq, NULL, "Set waveform frequency (sample)"},
    {" s %c", (FunctionPointer)cmd_set_shape, NULL, "Set waveform shape (s=sine, w=sawtooth, t=triangle, q=square, l=silence, 1=sequence 1)"},
+   {" sc %f", (FunctionPointer)cmd_set_scale, NULL, "Set waveform scale (0.0-1.0), 0.92 is good for my scope"},
 
    {" ", (FunctionPointer)NULL, NULL, ""},         //RSW - blank line? (for formatting only)
 
@@ -396,4 +398,14 @@ static int cmd_set_shape(char* pShape)
 }
 
    
+
+static int cmd_set_scale(float *pScale)
+{
+   if (fg_set_scale(*pScale))
+      db_printf("Set function generator scale to %0.3f\r\n", (double)*pScale);
+   else
+      db_printf("ERR: Setting function generator scale to %0.3f failed\r\n", (double)*pScale);
+
+   return 0;
+}
 

@@ -18,21 +18,22 @@
 static const float F_DAC_MAX = (float)DAC_MAX;
 static const float F_DAC_MID = (float)DAC_MID;
 
-// To prevent clipping (was seeing some due to loading from my 1M scope probe?)
-// slightly scale the output.   The signal generation functions generate as
-// an offset from F_DAC_MID, so the peak and the base are scaled by this factor.
-// In addition to the output peak limit, I also noticed with scope probe attached,
-// signal doesn't go down much below 63mV... setting the scale also prevents having
-// flat spots on the bottom of the triangle, sine, etc..
-static const float F_SCALE   = 0.92f;
-
 
 
 
 
 // Module parameters (modified with fg_set_ functions below)
 static float    g_freq  = 880.0f;          // Startup frequency
-static FG_SHAPE g_shape = FG_SEQUENCE1;    // Startup shape
+static FG_SHAPE g_shape = FG_SINE;         // Startup shape
+
+// To prevent clipping (was seeing some due to loading from my 1M scope probe?)
+// slightly scale the output.   The signal generation functions generate as
+// an offset from F_DAC_MID, so the peak and the base are scaled by this factor.
+// In addition to the output peak limit, I also noticed with scope probe attached,
+// signal doesn't go down much below 63mV... setting the scale also prevents having
+// flat spots on the bottom of the triangle, sine, etc..
+static float g_scale = 0.92f;
+
 
 
 
@@ -52,7 +53,7 @@ static void generate_sine(uint16_t *target_sub_buffer, uint16_t count)
 
    for (int i=0; i < count; i++) {
       // 12-bit DAC mid-point is 2048. Amplitude of 1500 keeps it from clipping.
-      float sample = F_DAC_MID + (F_DAC_MID * sinf(phase) * F_SCALE);
+      float sample = F_DAC_MID + (F_DAC_MID * sinf(phase) * g_scale);
 
       target_sub_buffer[i] = (uint16_t)sample;
 
@@ -77,7 +78,7 @@ static void generate_sawtooth(uint16_t *target_sub_buffer, uint16_t count)
 
    
    for (int i=0; i < count; i++) {
-      float sample = F_DAC_MID + F_DAC_MAX * phase * F_SCALE;
+      float sample = F_DAC_MID + F_DAC_MAX * phase * g_scale;
 
       target_sub_buffer[i] = (uint16_t)sample;
 
@@ -104,9 +105,9 @@ static void generate_triangle(uint16_t *target_sub_buffer, uint16_t count)
    for (int i=0; i < count; i++) {
       float sample;
       if (phase < 0.0f)
-         sample = F_DAC_MID + F_DAC_MID * (1.0f + phase) * F_SCALE;   // Upward half
+         sample = F_DAC_MID + F_DAC_MID * (1.0f + phase) * g_scale;   // Upward half
       else 
-         sample = F_DAC_MID + F_DAC_MID * (1.0f - phase) * F_SCALE;   // Downward half
+         sample = F_DAC_MID + F_DAC_MID * (1.0f - phase) * g_scale;   // Downward half
 
       target_sub_buffer[i] = (uint16_t)sample;
 
@@ -134,9 +135,9 @@ static void generate_square(uint16_t *target_sub_buffer, uint16_t count)
    for (int i=0; i < count; i++) {
       float sample;
       if (phase < 0.5f)
-         sample = F_DAC_MID + F_DAC_MID*F_SCALE;
+         sample = F_DAC_MID + F_DAC_MID*g_scale;
       else
-         sample = F_DAC_MID - F_DAC_MID*F_SCALE;
+         sample = F_DAC_MID - F_DAC_MID*g_scale;
 
       target_sub_buffer[i] = (uint16_t)sample;
 
@@ -242,6 +243,19 @@ bool fg_set_shape(FG_SHAPE shape_new)
    }  
    
    g_shape = shape_new;
+   return true;
+}
+
+
+
+bool fg_set_scale(float scale)
+{
+   if (0.0f > scale || scale > 1.0f) {
+      printf("ERR: Illegal scale %0.3f, try 0.0 - 1.0\r\n", (double)scale);
+      return false;
+   }
+
+   g_scale = scale;
    return true;
 }
 

@@ -24,6 +24,7 @@ typedef enum {
 
 bool fg_set_freq(int freq_new);
 bool fg_set_shape(FG_SHAPE shape_new);
+bool fg_set_scale(float scale);
 void fg_fill_dac_buffer(uint16_t *buf, uint16_t count);
 
 
