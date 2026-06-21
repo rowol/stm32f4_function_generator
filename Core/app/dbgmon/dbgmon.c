@@ -13,7 +13,7 @@
 #include "dbgmon.h"
 #include "dbgmsg.h"
 
-#include "sig_gen.h"
+#include "func_gen.h"
 
 
 #define CMD_LEN_MAX  256     //Includes trailing NULL

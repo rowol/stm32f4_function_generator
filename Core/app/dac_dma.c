@@ -13,7 +13,7 @@
 
 #include "app.h"
 #include "dac_dma.h"
-#include "sig_gen.h"
+#include "func_gen.h"
 
 
 

@@ -1,6 +1,6 @@
 //
-// SIG_GEN.C
-// Signal generator functions
+// FUNC_GEN.C
+// Signal generation functions
 // Sine, triange, sawtooth, square, silence, and custom sequences
 //
 
@@ -10,7 +10,7 @@
 
 #include "main.h"
 #include "app.h"
-#include "sig_gen.h"
+#include "func_gen.h"
 
 
 

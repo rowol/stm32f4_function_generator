@@ -1,6 +1,6 @@
 //
-// SIG_GEN.H
-// Signal generator functions
+// FUNC_GEN.H
+// Signal generation functions
 //
 
 #pragma once
