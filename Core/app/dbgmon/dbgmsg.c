@@ -14,8 +14,8 @@
 
 
 void db_outChar(char c)        {putchar(c);}
-void db_outStr(const char* sz) {printf("%s", sz);}
-void db_outMsg(const char* sz) {printf("%s\r\n", sz);}
+void db_outStr(const char* sz) {if (sz) printf("%s", sz);}
+void db_outMsg(const char* sz) {if (sz) printf("%s\r\n", sz);}
 
 
 
