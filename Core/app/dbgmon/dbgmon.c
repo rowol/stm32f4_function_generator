@@ -84,7 +84,7 @@ static int cmd_set_shape(char *pShape);
 
 static const DISPATCH dispatch_table[] =
 {
-   {" f %d", (FunctionPointer)cmd_set_freq, NULL, "Set waveform frequency"},
+   {" f %d", (FunctionPointer)cmd_set_freq, NULL, "Set waveform frequency in hz (1-22000)"},
    {" s %c", (FunctionPointer)cmd_set_shape, NULL, "Set waveform shape (s=sine, w=sawtooth, t=triangle, q=square, l=silence, 1=sequence 1)"},
    {" sc %f", (FunctionPointer)cmd_set_scale, NULL, "Set waveform scale (0.0-1.0), 0.92 is good for my scope"},
 

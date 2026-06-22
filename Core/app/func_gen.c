@@ -213,7 +213,7 @@ bool fg_set_freq(int freq_new)
    // The sampling rate is high enough that you could probably run higher frequencies
    // if desired.
    if (1 > freq_new || freq_new > 22000) {
-      printf("ERR: Illegal frequency, try 1 - 22000 hz\r\n");
+      printf("ERR: Illegal frequency, try 1-22000 hz\r\n");
       return false;
    }
 
